@@ -10,9 +10,41 @@ import albumData from './../data/albums';
          });
          
          this.state = {
-             album: album
+             album: album,
+             currentSong: album.songs[0],
+             isPlaying: false
          };
+         
+         this.audioElement = document.createElement('audio');
+         this.audioElement.src = album.songs[0].audioSrc;
      }
+     
+     play() {
+        this.audioElement.play();
+        this.setState({ isPlaying: true });
+     }
+     
+    pause() {
+        this.audioElement.pause();
+        this.setState({ isPlaying: false });
+     }
+     
+     setSong(song) {
+        this.audioElement.src = song.audioSrc;
+        this.setState({ currentSong: song });
+    }
+     
+     
+    handleSongClick(song) {
+     const isSameSong = this.state.currentSong === song;
+        if (this.state.isPlaying && isSameSong) {
+            this.pause();
+        } else {
+            if (!isSameSong) { this.setSong(song); } 
+            this.play();
+        }
+    }
+     
      render() {
          return (
              <section className="album">
@@ -29,15 +61,9 @@ import albumData from './../data/albums';
                     </colgroup>  
                 <tbody>
                 {
-                    this.state.albums.songs.map( (album, index) => 
-                        <div key={index}>
-                            <tr>
-                                <p>{album.songs.title}</p>
-                                <p>{album.songs.duration}</p>
-                                <p>{album.songs.indexOf("title")}</p>
-                            </tr>
-                            <tr></tr>
-                        </div>
+                    this.state.albums.songs.map( (song, index) => 
+
+                        <tr className="song" key={index} onClick={() => this.handleSongClick(song)} ></tr>
                     )
                 }
 
