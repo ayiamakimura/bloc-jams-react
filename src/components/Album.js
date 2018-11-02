@@ -72,7 +72,6 @@ import albumData from './../data/albums';
                         </tr>
                     )
                 }
-
                 </tbody>
                 </table>
              </section>
