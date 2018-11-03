@@ -63,10 +63,10 @@ import albumData from './../data/albums';
                     </colgroup>  
                 <tbody>
                 {
-                    this.state.albums.songs.map( (song, index) => 
+                    this.state.album.songs.map( (song, index) => 
 
                         <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-                            <td>{song.index + 1}</td>
+                            <td>{index + 1}</td>
                             <td>{song.title}</td>
                             <td>{song.duration}</td>
                         </tr>
