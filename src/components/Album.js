@@ -66,7 +66,20 @@ import albumData from './../data/albums';
                     this.state.album.songs.map( (song, index) => 
 
                         <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-                            <td>{index + 1}</td>
+                            
+                            <ion-icon name="play">
+                                <span className="ion-play"></span>
+         
+                            </ion-icon>
+                            
+                            
+                            <ion-icon name="pause" onMouseEnter={this.props.handleSongClick}>
+                                <span className="ion-pause"></span>
+                            </ion-icon>
+                            
+                            
+                            
+                            <td>{index + 1}<span className="ion-play"></span></td>
                             <td>{song.title}</td>
                             <td>{song.duration}</td>
                         </tr>
