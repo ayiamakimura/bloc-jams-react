@@ -15,7 +15,8 @@ import PlayerBar from './PlayerBar';
              currentSong: album.songs[0],
              currentTime: 0,
              duration: album.songs[0].duration, 
-             isPlaying: false
+             isPlaying: false,
+             hoveredSong: null,
          };
          
          this.audioElement = document.createElement('audio');
@@ -70,6 +71,27 @@ import PlayerBar from './PlayerBar';
     }
      
      
+     onMouseEnter(song) {
+         this.setState({ hoveredSong: song });
+     }
+     
+     
+     onMouseLeave(song) {
+         this.setState({ hoveredSong: null });
+     }
+     
+     
+     showIcon(song, index) {
+         if(this.state.currentSong === song && this.state.isPlaying === true) {
+             return <span className="icon ion-md-pause"></span>
+         } else if (this.state.hoveredSong === song){
+             return <span className="icon ion-md-play"></span>
+         }
+         else {
+             return <span>{index + 1}</span>
+         }};
+     
+     
     handlePrevClick() {
         const currentIndex = this.state.album.songs.findIndex(song => this.state.currentSong === song);
         const newIndex = Math.max(0, currentIndex - 1);
@@ -110,16 +132,18 @@ import PlayerBar from './PlayerBar';
                         <col id="song-duration-column" />
                     </colgroup>  
                 <tbody>
-                {
-                    this.state.album.songs.map( (song, index) => 
+                    {this.state.album.songs.map((song, index) => (
+                        <tr className="song" key={index} onClick={ () => this.handleSongClick(song) }
+                            onMouseEnter={ () => this.onMouseEnter(song) } onMouseLeave={ () => this.onMouseLeave(null) } >
+                            { this.showIcon(song, index) }
 
-                        <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-                            <td>{index + 1}</td>
                             <td>{song.title}</td>
                             <td>{song.duration}</td>
                         </tr>
-                    )
-                }
+                        )
+                    )}
+             
+             
                 </tbody>
                 </table>
                 <PlayerBar 
