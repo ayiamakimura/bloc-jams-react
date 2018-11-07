@@ -47,7 +47,7 @@
            <input 
                 type="range"
                 className="seek-bar" 
-                value="0.7" 
+                value={(this.props.muted ? 0 : this.props.volume)}
                 max="1" 
                 min="0" 
                 step="0.1"

@@ -18,22 +18,16 @@ import PlayerBar from './PlayerBar';
              isPlaying: false,
              hoveredSong: null,
              muted: false,
-             volume: 0.16,
+             volume: 1.0,
          };
          
          this.audioElement = document.createElement('audio');
          this.audioElement.src = album.songs[0].audioSrc;
          this.setMuted = true;
-         this.changeVolume = this.changeVolume.bind(this);
+
      }
      
-     changeVolume(steps) {
-         return () => {
-             const { player } = this.refs.player.getState();
-             const volume = player.volume;
-             this.refs.player.volume = volume + steps;
-         };
-     }
+ 
      
      play() {
         this.audioElement.play();
@@ -56,29 +50,30 @@ import PlayerBar from './PlayerBar';
                 this.setState({ duration: this.audioElement.duration });
             },
             
+            volumeupdate: e => {
+                this.setState({ muted: this.setMuted.muted });
+            },
+            
             volumechange: e => {
                 this.setState({ volume: this.setMuted.volume });
             }
         };
+        
         this.audioElement.addEventListener('timeupdate', this.eventListeners.timeupdate);
+        
         this.audioElement.addEventListener('durationchange', this.eventListeners.durationchange);
         
-        this.eventListeners = {
-            volumeupdate: e => {
-                this.setState({ muted: this.setMuted.muted });
-            },
-             
-            
-            
-            
-        };
+                
     }
      
      componentWillUnmount() {
          this.audioElement.src = null;
          this.audioElement.removeEventListener('timeupdate', this.eventListeners.timeupdate);
          this.audioElement.removeEventListener('durationchange', this.eventListeners.durationchange);
-         this.changeVolume = null;
+         
+         
+         this.changeVolume = 0.5;
+         this.setMuted.removeEventListener('volumechange', this.eventListeners.volumechange);
          this.setMuted.removeEventListener('volumechange', this.eventListeners.volumechange);
      }
      
@@ -148,10 +143,8 @@ import PlayerBar from './PlayerBar';
          this.setState({ currentTime: newTime });
      }
      
-     handleVolumeChange(e) {
-         const newVolume = this.changeVolume.volume * e.target.value;
-         this.changeVolume.muted = newVolume;
-         this.setState({ muted: newVolume });
+     handleVolumeChange = (event, volume) => {
+         this.setState({ volume });
      }
      
      render() {
@@ -192,7 +185,7 @@ import PlayerBar from './PlayerBar';
                     duration={this.audioElement.duration}
                     
                     muted={this.setMuted.muted}
-                    volume={this.changeVolume.volume}
+                    
                     
 
                     handleSongClick={() => this.handleSongClick(this.state.currentSong)}
