@@ -42,9 +42,19 @@
          
          
          <section id="volume-control">
-           <div className="icon ion-md-volume-low"></div>
-           <input type="range" className="seek-bar" value="80" />
-           <div className="icon ion-md-volume-high"></div>
+           <div className="icon ion-md-volume-low">{this.props.muted}</div>
+
+           <input 
+                type="range"
+                className="seek-bar" 
+                value={(this.props.muted / this.props.volume) || 0}
+                max="1" 
+                min="0" 
+                step="0.1"
+            />
+                    
+                    
+           <div className="icon ion-md-volume-high">{this.props.volume}</div>
          </section>
        </section>
      );

@@ -17,10 +17,22 @@ import PlayerBar from './PlayerBar';
              duration: album.songs[0].duration, 
              isPlaying: false,
              hoveredSong: null,
+             muted: false,
+             volume: 0.16,
          };
          
          this.audioElement = document.createElement('audio');
          this.audioElement.src = album.songs[0].audioSrc;
+         this.setMuted = true;
+         this.changeVolume = this.changeVolume.bind(this);
+     }
+     
+     changeVolume(steps) {
+         return () => {
+             const { player } = this.refs.player.getState();
+             const volume = player.volume;
+             this.refs.player.volume = volume + steps;
+         };
      }
      
      play() {
@@ -50,6 +62,25 @@ import PlayerBar from './PlayerBar';
          this.audioElement.src = null;
          this.audioElement.removeEventListener('timeupdate', this.eventListeners.timeupdate);
          this.audioElement.removeEventListener('durationchange', this.eventListeners.durationchange);
+     }
+     
+     
+     
+    componentDidMount() {
+        this.eventListeners = {
+            volumeupdate: e => {
+                this.setState({ muted: this.setMuted.muted });
+            },
+            durationchange: e => {
+                this.setState({ volume: this.setMuted.volume });
+            }
+        };
+
+    }
+     
+     componentWillUnmount() {
+         this.changeVolume = null;
+         this.setMuted.removeEventListener('volumechange', this.eventListeners.volumechange);
      }
      
      
@@ -115,6 +146,12 @@ import PlayerBar from './PlayerBar';
          this.setState({ currentTime: newTime });
      }
      
+     handleVolumeChange(e) {
+         const newVolume = this.changeVolume.volume * e.target.value;
+         this.changeVolume.muted = newVolume;
+         this.setState({ muted: newVolume });
+     }
+     
      render() {
          return (
              <section className="album">
@@ -151,6 +188,11 @@ import PlayerBar from './PlayerBar';
                     currentSong={this.state.currentSong}
                     currentTime={this.audioElement.currentTime}
                     duration={this.audioElement.duration}
+                    
+                    muted={this.setMuted.muted}
+                    volume={this.changeVolume.volume}
+                    
+
                     handleSongClick={() => this.handleSongClick(this.state.currentSong)}
                     handlePrevClick={() => this.handlePrevClick()}
                     handleNextClick={() => this.handleNextClick()}
