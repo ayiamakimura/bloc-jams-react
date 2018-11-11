@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import albumData from './../data/albums';
 import PlayerBar from './PlayerBar';
 
+
  class Album extends Component {
      constructor(props) {
          super(props);
@@ -49,14 +50,7 @@ import PlayerBar from './PlayerBar';
             durationchange: e => {
                 this.setState({ duration: this.audioElement.duration });
             },
-            
-            volumeupdate: e => {
-                this.setState({ muted: this.setMuted.muted });
-            },
-            
-            volumechange: e => {
-                this.setState({ volume: this.setMuted.volume });
-            }
+
         };
         
         this.audioElement.addEventListener('timeupdate', this.eventListeners.timeupdate);
@@ -71,16 +65,9 @@ import PlayerBar from './PlayerBar';
          this.audioElement.removeEventListener('timeupdate', this.eventListeners.timeupdate);
          this.audioElement.removeEventListener('durationchange', this.eventListeners.durationchange);
          
-         
-         this.changeVolume = 0.5;
-         this.setMuted.removeEventListener('volumechange', this.eventListeners.volumechange);
-         this.setMuted.removeEventListener('volumechange', this.eventListeners.volumechange);
      }
      
-     
-    
-     
-     
+  
      
      setSong(song) {
         this.audioElement.src = song.audioSrc;
@@ -143,13 +130,26 @@ import PlayerBar from './PlayerBar';
          this.setState({ currentTime: newTime });
      }
      
-     handleVolumeChange = (event, volume) => {
-         this.setState({ volume });
+     
+     handleVolumeChange(e) {
+         this.audioElement.volume = e.target.value;
+         this.setState({ volume: e.target.value});
+     }
+    
+     formatTime(time) {
+         if (time) {
+             let minutes = Math.floor(time/60)
+             let seconds = Math.floor(time % 60)
+             seconds = seconds < 10 ? "0" + seconds : seconds
+             return minutes + ":" + seconds
+         } else {
+             return "-:--"
+         }
      }
      
      render() {
          return (
-             <section className="album">
+             <section className="album" className="container">
                 <section id="album-info">
                     <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title}/>
                     <div className="album-details">
@@ -170,7 +170,8 @@ import PlayerBar from './PlayerBar';
                             { this.showIcon(song, index) }
 
                             <td>{song.title}</td>
-                            <td>{song.duration}</td>
+
+                            <td>{this.formatTime(song.duration)}</td>
                         </tr>
                         )
                     )}
@@ -178,22 +179,23 @@ import PlayerBar from './PlayerBar';
              
                 </tbody>
                 </table>
-                <PlayerBar 
+                <PlayerBar
                     isPlaying={this.state.isPlaying}
                     currentSong={this.state.currentSong}
                     currentTime={this.audioElement.currentTime}
-                    duration={this.audioElement.duration}
-                    
-                    muted={this.setMuted.muted}
-                    
+                    formatTime={(t) => this.formatTime(t)}
+
+                    muted={this.state.muted}
+                    volume={this.state.volume}
                     
 
                     handleSongClick={() => this.handleSongClick(this.state.currentSong)}
                     handlePrevClick={() => this.handlePrevClick()}
                     handleNextClick={() => this.handleNextClick()}
                     handleTimeChange={(e) => this.handleTimeChange(e)}
-                    handleVolumeChange={(e) => this.handleVolumeChange(e)}
-                />
+                    handleVolumeChange = {(e) => this.handleVolumeChange(e)} 
+
+               />
              </section>
          );
      }
